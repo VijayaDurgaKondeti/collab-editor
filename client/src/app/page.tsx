@@ -16,11 +16,18 @@ export default function Home() {
     router.push(`/doc/${id}`);
   };
 
-  const joinRoom = () => {
-    if (roomId.trim()) {
-      router.push(`/doc/${roomId.trim()}`);
-    }
-  };
+ const joinRoom = () => {
+  if (!roomId.trim()) return;
+  
+  // Handle both full URL and just room ID
+  const input = roomId.trim();
+  if (input.includes('/doc/')) {
+    const id = input.split('/doc/')[1];
+    router.push(`/doc/${id}`);
+  } else {
+    router.push(`/doc/${input}`);
+  }
+};
 
   return (
     <main style={{ maxWidth: 500, margin: '100px auto', padding: '0 20px', textAlign: 'center' }}>
@@ -49,7 +56,7 @@ export default function Home() {
       <div style={{ display: 'flex', gap: 8 }}>
         <input
           type="text"
-          placeholder="Enter room ID to join..."
+          placeholder="Enter room ID or paste link..."
           value={roomId}
           onChange={(e) => setRoomId(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && joinRoom()}

@@ -10,7 +10,12 @@ const USER_COLORS = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
 const randomColor = () => USER_COLORS[Math.floor(Math.random() * USER_COLORS.length)];
 const randomName  = () => `User-${Math.floor(Math.random() * 1000)}`;
 
-export default function Editor({ docId }: { docId: string }) {
+interface EditorProps {
+  docId: string;
+  onOnlineCountChange?: (count: number) => void;
+}
+
+export default function Editor({ docId, onOnlineCountChange }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,14 +44,11 @@ export default function Editor({ docId }: { docId: string }) {
       },
     });
 
-    // Wait for sync from server before allowing edits
     let isSynced = false;
 
     provider.on('sync', (synced: boolean) => {
-      console.log('Synced:', synced);
       if (synced && !isSynced) {
         isSynced = true;
-        // Load existing content from Yjs into Quill
         const delta = ytext.toDelta();
         if (delta.ops && delta.ops.length > 0) {
           quill.setContents(delta, 'silent');
@@ -54,14 +56,12 @@ export default function Editor({ docId }: { docId: string }) {
       }
     });
 
-    // Yjs → Quill: apply remote changes
     ytext.observe((_event, transaction) => {
       if (transaction.local) return;
       const delta = ytext.toDelta();
       quill.setContents(delta, 'silent');
     });
 
-    // Quill → Yjs: send local changes
     quill.on('text-change', (delta, _old, source) => {
       if (source !== 'user') return;
       ydoc.transact(() => {
@@ -69,11 +69,16 @@ export default function Editor({ docId }: { docId: string }) {
       });
     });
 
-    // Awareness
     const awareness = provider.awareness;
     awareness.setLocalStateField('user', {
       name: randomName(),
       color: randomColor(),
+    });
+
+    // Report online count to parent
+    awareness.on('change', () => {
+      const count = awareness.getStates().size;
+      onOnlineCountChange?.(count);
     });
 
     quill.on('selection-change', (range) => {
@@ -85,7 +90,7 @@ export default function Editor({ docId }: { docId: string }) {
       ydoc.destroy();
       container.innerHTML = '';
     };
-  }, [docId]);
+  }, [docId, onOnlineCountChange]);
 
   return (
     <div
