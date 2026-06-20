@@ -1,10 +1,7 @@
-import type { Metadata } from "next";
-import "./globals.css";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Collaborative Editor",
-  description: "Real-time collaborative editor",
-};
+import { SessionProvider } from 'next-auth/react';
+import './globals.css';
 
 export default function RootLayout({
   children,
@@ -13,7 +10,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }
