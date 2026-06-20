@@ -1,0 +1,59 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+  background: #f5f5f5 !important;
+  color: #171717 !important;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ql-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  left: 50% !important;
+  transform: translateX(-50%);
+}
+
+.ql-tooltip input[type=text] {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+}
+
+.ql-tooltip a.ql-action,
+.ql-tooltip a.ql-remove {
+  margin-left: 8px;
+  cursor: pointer;
+  color: #3498db;
+  text-decoration: none;
+}
+
+.ql-tooltip.ql-hidden {
+  display: none;
+}
+
+.ql-container {
+  overflow: visible !important;
+}
+
+.ql-editor {
+  overflow-y: auto;
+  min-height: 460px;
+}
