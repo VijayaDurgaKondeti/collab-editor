@@ -54,18 +54,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        await pool.query(
-          `INSERT INTO users (name, email, image)
-           VALUES ($1, $2, $3)
-           ON CONFLICT (email) DO UPDATE SET name = $1, image = $3`,
-          [user.name, user.email, user.image]
-        );
-      }
-      return true;
-    },
+  async signIn() {
+    return true;
   },
+},
   pages: { signIn: '/auth/signin' },
   session: { strategy: 'jwt' },
 });
